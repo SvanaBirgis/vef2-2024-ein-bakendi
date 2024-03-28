@@ -1,11 +1,11 @@
 {
-  "name": "vef2-2023-v3",
+  "name": "vef2-2024-ein-bakendi",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/app.ts",
   "scripts": {
     "dev": "nodemon",
-    "start": "node --loader ts-node/esm ./src/app.ts",
+    "start": "tsx ./src/app.ts",
     "setup": "cross-env NODE_OPTIONS='--experimental-vm-modules' NODE_NO_WARNINGS=1 node --loader ts-node/esm ./src/setup.ts",
     "lint": "eslint ./src"
   },
@@ -23,6 +23,7 @@
     "pg": "^8.11.3",
     "slugify": "^1.6.6",
     "ts-node": "^10.9.2",
+    "tsx": "^4.7.1",
     "xss": "^1.0.15"
   },
   "devDependencies": {

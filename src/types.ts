@@ -1,13 +1,12 @@
 export type News = {
-  id: string;
+  id?: string;
   league: string;
   title: string;
   content: string;
-  date: Date;
+  inserted?: Date;
 };
 
 export type League = {
-  id: string;
   name: string;
   description: string;
 };

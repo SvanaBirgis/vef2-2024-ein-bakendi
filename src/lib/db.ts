@@ -120,9 +120,27 @@ export class Database {
         league: result.rows[0].league,
         title: result.rows[0].title,
         content: result.rows[0].content,
-        date: result.rows[0].inserted,
+        inserted: result.rows[0].inserted,
       };
       return news;
+    }
+
+    return null;
+  }
+
+  async getLeagues() {
+    const q = `
+      SELECT
+        name,
+        description
+      FROM
+        league
+    `;
+
+    const result = await this.query(q);
+
+    if (result && result.rows.length > 0) {
+      return result.rows;
     }
 
     return null;
@@ -143,7 +161,7 @@ export class Database {
         league: league,
         title: title,
         content: content,
-        date: result.rows[0].inserted,
+        inserted: result.rows[0].inserted,
       };
       return news;
     }

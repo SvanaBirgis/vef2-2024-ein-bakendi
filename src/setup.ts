@@ -1,10 +1,9 @@
 import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
 import { Database } from './lib/db.js';
 import { environment } from './lib/environment.js';
 import { readFilesFromDir } from './lib/file.js';
 import { ILogger, logger as loggerSingleton } from './lib/logger.js';
-import { parseGamedayFile, parseTeamsJson } from './lib/parse.js';
+import { parseNewsFile } from './lib/parse.js';
 
 const SCHEMA_FILE = './sql/schema.sql';
 const DROP_SCHEMA_FILE = './sql/drop.sql';
@@ -44,33 +43,38 @@ async function setupDbFromFiles(
 }
 
 async function setupData(db: Database, logger: ILogger) {
-  const teamsFileData = await readFile(join(INPUT_DIR, 'teams.json'));
-  const teams = parseTeamsJson(teamsFileData.toString('utf-8'));
-  logger.info('team names read', { total: teams.length });
-
   const files = await readFilesFromDir(INPUT_DIR);
-  const gamedayFiles = files.filter((file) => file.indexOf('gameday-') > 0);
-  logger.info('gameday files found', { total: gamedayFiles.length });
+  const newsFiles = files.filter((file) => file.indexOf('news-') > 0);
+  logger.info('news files found', { total: newsFiles.length });
 
-  const gamedays = [];
-  logger.info('starting to parse gameday files');
-  for await (const gamedayFile of gamedayFiles) {
-    const file = await readFile(gamedayFile);
+  const newsArr = [];
+  logger.info('starting to parse news files');
+  for await (const newsFile of newsFiles) {
+    const file = await readFile(newsFile);
 
     try {
-      gamedays.push(parseGamedayFile(file.toString('utf-8'), logger, teams));
+      newsArr.push(parseNewsFile(file.toString('utf-8')));
     } catch (e) {
-      logger.error(`unable to parse ${gamedayFile}`, {
+      logger.error(`unable to parse ${newsFile}`, {
         error: (e as Error).message,
       });
     }
   }
-  logger.info('gameday files parsed', { total: gamedays.length });
+  logger.info('news files parsed', { total: newsArr.length });
 
-  const dbNews = await db.insertNews(title, content, league);
-  logger.info('news inserted', { total: dbNews.length });
+  let totalInserted = 0;
+  for (const news of newsArr) {
+    const { title, content, league } = news;
+    const dbNews = await db.insertNews(title, content, league);
 
-  if (!dbNews) {
+    if (!dbNews) {
+      logger.info('error inserting news');
+    } else {
+      totalInserted += 1;
+    }
+
+  }
+  if (totalInserted !== newsArr.length) {
     logger.info('error inserting news');
     return false;
   }
