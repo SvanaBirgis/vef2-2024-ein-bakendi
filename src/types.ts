@@ -7,6 +7,7 @@ export type News = {
 };
 
 export type League = {
+  id?: string;
   name: string;
   description: string;
 };

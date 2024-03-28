@@ -1,5 +1,6 @@
 CREATE TABLE public.league (
-  name CHARACTER VARYING(64) NOT NULL UNIQUE PRIMARY KEY,
+  id serial primary key,
+  name CHARACTER VARYING(64) NOT NULL UNIQUE,
   description TEXT DEFAULT ''
 );
 

@@ -2,11 +2,11 @@ import { NextFunction, Request, Response } from 'express';
 
 import { getDatabase } from '../lib/db.js';
 import {
-    atLeastOneBodyValueValidator,
-    genericSanitizer,
-    stringValidator,
-    validationCheck,
-    xssSanitizer
+  atLeastOneBodyValueValidator,
+  genericSanitizer,
+  stringValidator,
+  validationCheck,
+  xssSanitizer
 } from '../lib/validation.js';
 
 export async function listNews(req: Request, res: Response) {
@@ -63,6 +63,16 @@ export async function getNews(req: Request, res: Response) {
 
 export async function deleteNews(req: Request, res: Response) {
   const news = await getDatabase()?.deleteNews(req.params.id);
+
+  if (!news) {
+    return res.status(404).json({ error: 'News not found' });
+  }
+
+  return res.json(news);
+}
+
+export async function getNewsByLeague(req: Request, res: Response) {
+  const news = await getDatabase()?.getNewsByLeague(req.params.id);
 
   if (!news) {
     return res.status(404).json({ error: 'News not found' });

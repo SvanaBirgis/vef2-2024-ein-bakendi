@@ -1,5 +1,5 @@
 import pg from 'pg';
-import { News } from '../types.js';
+import { League, News } from '../types.js';
 import { environment } from './environment.js';
 import { ILogger, logger as loggerSingleton } from './logger.js';
 
@@ -131,6 +131,7 @@ export class Database {
   async getLeagues() {
     const q = `
       SELECT
+        id,
         name,
         description
       FROM
@@ -145,6 +146,31 @@ export class Database {
 
     return null;
   }
+
+  /**
+   * Get league by id from the database.
+  **/
+  async getLeagueById(id: string): Promise<League | null> {
+    const q = `
+      SELECT
+        id,
+        name,
+        description
+      FROM
+        league
+      WHERE
+        id = $1
+    `;
+
+    const result = await this.query(q, [id]);
+
+    if (result && result.rows.length > 0) {
+      return result.rows[0];
+    }
+
+    return null;
+  }
+
 
   /**
    * Insert news into the database.
@@ -181,6 +207,45 @@ export class Database {
     return true;
   }
 
+  /**
+   * Get news by league from the database.
+   */
+  async getNewsByLeague(league_id: string): Promise<News[] | null> {
+    const league = await this.getLeagueById(league_id);
+    if (!league) {
+      return null;
+    }
+
+    const q = `
+      SELECT
+        id,
+        league,
+        title,
+        content,
+        inserted
+      FROM
+        news
+      WHERE
+        league = $1
+      ORDER BY
+        inserted DESC
+    `;
+
+    const result = await this.query(q, [league.name]);
+
+    if (result && result.rows.length > 0) {
+      return result.rows.map((row) => ({
+        id: row.id,
+        league: row.league,
+        title: row.title,
+        content: row.content,
+        inserted: row.inserted,
+      }));
+    }
+
+    return null;
+  }
+
 }
 
 let db: Database | null = null;
@@ -203,3 +268,5 @@ export function getDatabase() {
 
   return db;
 }
+
+
