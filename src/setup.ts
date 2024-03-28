@@ -67,17 +67,13 @@ async function setupData(db: Database, logger: ILogger) {
   }
   logger.info('gameday files parsed', { total: gamedays.length });
 
-  const dbTeams = await db.insertTeams(teams);
-  logger.info('teams inserted', { total: dbTeams.length });
+  const dbNews = await db.insertNews(title, content, league);
+  logger.info('news inserted', { total: dbNews.length });
 
-  const dbGamedays = await db.insertGamedays(gamedays, dbTeams);
-
-  if (!dbGamedays) {
-    logger.info('error inserting gamedays');
+  if (!dbNews) {
+    logger.info('error inserting news');
     return false;
   }
-
-  logger.info('gamedays inserted');
 
   return true;
 }

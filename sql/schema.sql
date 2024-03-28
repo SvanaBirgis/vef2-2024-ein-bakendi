@@ -1,23 +1,12 @@
-CREATE TABLE public.users (
+CREATE TABLE public.news (
   id serial primary key,
-  name CHARACTER VARYING(64) NOT NULL,
-  username character varying(64) NOT NULL UNIQUE,
-  password character varying(256) NOT NULL,
-  admin BOOLEAN DEFAULT false
+  league CHARACTER VARYING(64) NOT NULL REFERENCES leagues(name),
+  title CHARACTER VARYING(128) NOT NULL,
+  content TEXT NOT NULL,
+  date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE public.teams (
-  id serial primary key,
-  name CHARACTER VARYING(64) NOT NULL UNIQUE,
-  slug CHARACTER VARYING(64) NOT NULL UNIQUE,
+CREATE TABLE public.league (
+  name CHARACTER VARYING(64) NOT NULL UNIQUE PRIMARY KEY,
   description TEXT DEFAULT ''
-);
-
-CREATE TABLE public.games (
-  id serial primary key,
-  date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  home integer NOT NULL REFERENCES teams(id),
-  away integer NOT NULL REFERENCES teams(id),
-  home_score integer NOT NULL check (home_score >= 0),
-  away_score integer NOT NULL check (away_score >= 0)
 );

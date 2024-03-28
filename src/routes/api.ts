@@ -1,46 +1,28 @@
 import express, { Request, Response } from 'express';
-import { createGame, deleteGame, getGame, listGames } from './games.js';
-import {
-  createTeam,
-  deleteTeam,
-  getTeam,
-  listTeams,
-  updateTeam,
-} from './teams.js';
+import { createNews, deleteNews, getNews, listNews } from './news.js';
+
 
 export const router = express.Router();
 
 export async function index(req: Request, res: Response) {
   return res.json([
     {
-      href: '/teams',
+      href: '/news',
       methods: ['GET', 'POST'],
     },
     {
-      href: '/teams/:slug',
+      href: '/news/:id', // or /news/:slug
       methods: ['GET', 'PATCH', 'DELETE'],
     },
-    {
-      href: '/games',
-      methods: ['GET', 'POST'],
-    },
-    {
-      href: '/games/:date',
-      methods: ['GET', 'PATCH', 'DELETE'],
-    },
+
   ]);
 }
 
 router.get('/', index);
 
-router.get('/teams', listTeams);
-router.post('/teams', createTeam);
-router.get('/teams/:slug', getTeam);
-router.patch('/teams/:slug', updateTeam);
-router.delete('/teams/:slug', deleteTeam);
 
-router.get('/games', listGames);
-router.post('/games', createGame);
-router.get('/games/:id', getGame);
-router.delete('/games/:id', deleteGame);
-// router.patch('/games/:id', updateGame);
+router.get('/news', listNews);
+router.post('/news', createNews);
+router.get('/news/:id', getNews);
+router.delete('/news/:id', deleteNews);
+
