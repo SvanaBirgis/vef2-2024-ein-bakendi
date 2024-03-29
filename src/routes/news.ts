@@ -52,7 +52,7 @@ export const createNews = [
 ];
 
 export async function getNews(req: Request, res: Response) {
-  const news = await getDatabase()?.getNews(req.params.id);
+  const news = await getDatabase()?.getNewsById(req.params.id);
 
   if (!news) {
     return res.status(404).json({ error: 'News not found' });

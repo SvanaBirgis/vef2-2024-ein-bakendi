@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { getLeagues } from './league.js';
+import { getLeagueById, getLeagues } from './league.js';
 import { createNews, deleteNews, getNews, getNewsByLeague, listNews } from './news.js';
 
 
@@ -20,6 +20,10 @@ export async function index(req: Request, res: Response) {
       methods: ['GET'],
     },
     {
+      href: '/leagues/:id',
+      methods: ['GET'],
+    },
+    {
       href: '/news/leagues/:id',
       methods: ['GET'],
     }
@@ -34,5 +38,6 @@ router.post('/news', createNews);
 router.get('/news/:id', getNews);
 router.delete('/news/:id', deleteNews);
 router.get('/leagues', getLeagues);
+router.get('/leagues/:id', getLeagueById);
 router.get('/news/leagues/:id', getNewsByLeague);
 

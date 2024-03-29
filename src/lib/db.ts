@@ -95,9 +95,41 @@ export class Database {
   }
 
   /**
-   * Get news from the database.
+   * Get all news from the database.
    */
-  async getNews(id?: string): Promise<News | null> {
+  async getNews(): Promise<News[] | null> {
+    const q = `
+      SELECT
+        id,
+        league,
+        title,
+        content,
+        inserted
+      FROM
+        news
+      ORDER BY
+        inserted DESC
+    `;
+
+    const result = await this.query(q);
+
+    if (result && result.rows.length > 0) {
+      return result.rows.map((row) => ({
+        id: row.id,
+        league: row.league,
+        title: row.title,
+        content: row.content,
+        inserted: row.inserted,
+      }));
+    }
+
+    return null;
+  }
+
+  /**
+   * Get news from the database by id.
+   */
+  async getNewsById(id?: string): Promise<News | null> {
     const q = `
       SELECT
         id,

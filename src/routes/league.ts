@@ -11,3 +11,13 @@ export async function getLeagues(req: Request, res: Response) {
 
     return res.json(leagues);
 }
+
+export async function getLeagueById(req: Request, res: Response) {
+    const league = await getDatabase()?.getLeagueById(req.params.id);
+
+    if (!league) {
+        return res.status(404).json({ error: 'League not found' });
+    }
+
+    return res.json(league);
+}
